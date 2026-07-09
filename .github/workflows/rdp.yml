@@ -9,15 +9,18 @@ jobs:
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           net user runneradmin Hack12345
-          net localgroup administrators runneradmin /add
           
-      - name: Show Connection Info
+      - name: Show IP
         run: |
-          curl -s ifconfig.me
+          $IP = (Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing).Content
+          echo "============================================"
+          echo "           RDP BILGILERI"
+          echo "============================================"
+          echo "IP: $IP"
           echo "Kullanici: runneradmin"
           echo "Sifre: Hack12345"
+          echo "============================================"
           
       - name: Keep Alive 6 Hours
-        run: |
-          ping -t 127.0.0.1
+        run: Start-Sleep -Seconds 21600
         timeout-minutes: 360
