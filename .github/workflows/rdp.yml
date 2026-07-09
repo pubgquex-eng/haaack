@@ -4,23 +4,15 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Enable RDP
+      - name: Download Ngrok
+        run: |
+          Invoke-WebRequest -Uri "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip" -OutFile "ngrok.zip"
+          Expand-Archive -Path "ngrok.zip"
+          
+      - name: Setup RDP
         run: |
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           net user runneradmin Hack12345
-          
-      - name: Show IP
-        run: |
-          $IP = (Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing).Content
-          echo "============================================"
-          echo "           RDP BILGILERI"
-          echo "============================================"
-          echo "IP: $IP"
-          echo "Kullanici: runneradmin"
-          echo "Sifre: Hack12345"
-          echo "============================================"
-          
-      - name: Keep Alive 6 Hours
-        run: Start-Sleep -Seconds 21600
+          ./ngrok/ngrok.exe tcp 3389 --authtoken 2J9Yk8ZxPq3mWvN5rL7tB_4hK6jHgFdS1aQwE
         timeout-minutes: 360
